@@ -202,6 +202,17 @@ exact-size reads from the open-response byte count, strip the status byte
 before packed7 decode, no reads past EOF, no aggressive retries, no
 overlapping sessions ([file-protocol.md](file-protocol.md)).
 
+**Interrupted-GET aftermath (EP-40 2.5.1, 2026-07-11, with argument dump):**
+killing a client mid-GET-stream (a large read-back batch) left device-side
+session state that `FILE_INIT` did **not** clear. Subsequent `FILE_INIT`,
+LIST, STAT and even metadata reads all succeeded — then the first
+**FILE_PUT open** dropped the device into a debug loop:
+`main[332]: err 8200 100f0696 10040a15 2c006008 2_5_1`. Rule: after any
+abandoned/killed mid-stream FILE session, **power-cycle before the next
+write** — successful reads are not evidence the session state is clean. (An
+earlier apparent counter-example recovered only because the device dropped
+off USB and re-enumerated, which is its own reset.)
+
 ### Silent playback (not an error)
 
 A valid, byte-exact-readback project can still play nothing if any assigned

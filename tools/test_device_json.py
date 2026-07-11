@@ -160,7 +160,20 @@ def restore(client, midi_output, project, checkpoint, original_active, report):
     client.write_project_archive(project, checkpoint)
     restored, _meta = client.read_project_archive(project)
     if restored != checkpoint:
-        raise RuntimeError("checkpoint restore readback mismatch")
+        # Device-side write normalization (see file-protocol.md): stub/sparse
+        # checkpoints come back with default members materialized. Semantic
+        # equivalence — every checkpoint member byte-intact — is the correct
+        # restore criterion.
+        checkpoint_members = eptar.member_payloads(checkpoint)
+        restored_members = eptar.member_payloads(restored)
+        changed = [name for name, payload in checkpoint_members.items()
+                   if restored_members.get(name) != payload]
+        if changed:
+            raise RuntimeError(
+                f"checkpoint restore altered member payloads: {changed[:6]}"
+            )
+        print(f"  (device-normalized restore: {len(checkpoint)} -> {len(restored)} B, "
+              f"all {len(checkpoint_members)} checkpoint members intact)")
     client.reload_project(project)
     if original_active and original_active != project_fid(project):
         client.set_metadata(PROJECTS_NODE_ID, {"active": original_active})

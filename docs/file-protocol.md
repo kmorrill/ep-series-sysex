@@ -14,7 +14,15 @@ little-endian project TAR internals — see
 ⚠ **The FILE subsystem is globally single-threaded.** Overlapping FILE
 sessions — even two read-only clients — reproducibly wedge the device into a
 debug loop (`err lfs 6327`, see [errors.md](errors.md#err-lfs-6327)).
-Serialize every read and write behind one lock.
+Serialize every read and write behind one lock — and make it **one lock path
+per device shared by every tool that talks to it**. Locks from different
+tool lineages do not compose: two agents each holding "their own" lock have
+zero mutual exclusion (observed live: concurrent tooling with separate lock
+files was one missed timeslice away from an overlap wedge). `epsysex` uses
+`/tmp/ep-device.lock`; anything else driving an EP device should take the
+same file. Relatedly, a client killed mid-stream leaves device session
+state that survives `FILE_INIT` — power-cycle before the next write
+([errors.md](errors.md#err-82--err-8200)).
 
 ## Sub-commands
 
