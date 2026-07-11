@@ -1,0 +1,53 @@
+{
+  "schema": "ep.project.v1",
+  "metadata": {
+    "title": "epsysex example",
+    "_comment": "Minimal but complete: two assigned pads, one A-group pattern with note events and a level-fader automation lane, one scene, a one-entry song. The B/C/D patterns are EMPTY members: every EP device rejects a scene with a zero group-pattern reference (err pattern 187 on EP-133, 213 on EP-40 — a power-cycle debug loop), so silent groups must reference an empty pattern. The 'settings' member is deliberately omitted: fabricating one into a from-scratch archive has bricked a project slot (ERR CLOCK 43) on some firmware states. Add a settings section only against a scratch slot you can reformat. Sound slots 421/100 must already exist under /sounds on the device or playback is silent."
+  },
+  "pads": [
+    {
+      "group": "A",
+      "pad": 10,
+      "slot": 421,
+      "trimEnd": 13699,
+      "amplitude": 100,
+      "release": 255,
+      "playMode": 0,
+      "rootNote": 60
+    },
+    {
+      "group": "A",
+      "pad": 7,
+      "slot": 100,
+      "trimEnd": 7791,
+      "amplitude": 96,
+      "release": 255,
+      "playMode": 0,
+      "rootNote": 60
+    }
+  ],
+  "patterns": [
+    {
+      "id": "A01",
+      "bars": 2,
+      "events": [
+        { "tick": 0, "pad": 10, "note": 60, "velocity": 112, "duration": 36 },
+        { "tick": 192, "pad": 7, "note": 60, "velocity": 96, "duration": 24 },
+        { "tick": 384, "pad": 10, "note": 60, "velocity": 104, "duration": 36 },
+        { "tick": 576, "pad": 7, "note": 60, "velocity": 96, "duration": 24 }
+      ],
+      "automation": [
+        { "tick": 0, "parameterID": 0, "value": 8192 },
+        { "tick": 384, "parameterID": 0, "value": 20480 },
+        { "tick": 672, "parameterID": 0, "value": 32000 }
+      ]
+    },
+    { "id": "B01", "bars": 1, "events": [] },
+    { "id": "C01", "bars": 1, "events": [] },
+    { "id": "D01", "bars": 1, "events": [] }
+  ],
+  "scenes": [
+    { "groupPatterns": [1, 1, 1, 1] }
+  ],
+  "song": [1]
+}

@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.venv/
+.DS_Store
+
+# Local device captures (keep the repo lean; tests/fixtures/ ships exemplars)
+captures/
+*.wav
+tests/artifacts/hardware/
+
+# Local device projects and live-deployment evidence. Never publish captures,
+# checkpoints, readbacks, OEM content, or ad-hoc authored hardware projects.
+/project*.tar
+/project*.wav
+/project*-report.json
+/project*-capture.json
+/project*-eight-bar.json
