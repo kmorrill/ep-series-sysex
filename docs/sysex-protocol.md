@@ -130,7 +130,12 @@ emits a metadata event carrying the `active` pad file id (this is how the
 These are generic file-system events. No semantic events such as
 "scene changed" or "pattern changed" are known to exist; scene/pattern
 performance state is not broadcast (inferable only from MIDI note output plus
-clock counting).
+clock counting). Confirmed on EP-133 OS 2.5.1: picking a pattern on the device
+(hold the group, then a number) rewrites the current scene's group reference
+in the project's `scenes` member, but sends no FILE event and no MIDI; the
+change shows up only in the next project read. Changing scene (`MAIN` + `−`/`+`)
+and switching project (hold `MAIN` + a pad) send no event either; the active
+project can be polled from `/projects` metadata.
 
 ## Firmware version — MIDI Universal Identity Request
 
