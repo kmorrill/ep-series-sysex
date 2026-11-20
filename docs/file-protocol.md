@@ -110,6 +110,20 @@ FILE_GET data:  03 01 <page u16>        repeat, incrementing page
 - Remember the status byte is **outside** packed7
   ([sysex-protocol.md](sysex-protocol.md#response-structure-and-the-status-byte));
   decoding it as payload makes pages appear to echo wrong numbers.
+- **Read every page back to back, to EOF** (EP-133 OS 2.5.1). Reading only
+  some pages of a project (random page access, no read to EOF) showed
+  `ERR 820` on the display and the device dropped off USB. Reading every page
+  to EOF but pausing 20 ms after each page made the device stop answering
+  mid-read, drop off USB and reboot itself. Power-cycle before any write after
+  either ([errors.md](errors.md#err-82--err-8200)).
+- **After a project read the device ignores its own buttons for 3.0 s**
+  (EP-133 OS 2.5.1): STOP pressed 2–3 s into playback, right after a full read,
+  took effect exactly 3.0 s after the read ended, in 12 runs out of 12; with no
+  reads it was instant. Polling the group/project metadata every 300 ms did not
+  cause it. Notes sent over MIDI to a pad on its own channel were not delayed
+  by reads (24 hits per case, idle vs back-to-back reads: none lost, latency
+  within 1 ms, timed from the USB audio). So a tool that reads while the user
+  plays makes the device's buttons feel dead, even though playback continues.
 
 ## Writing a project TAR
 

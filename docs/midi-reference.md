@@ -86,6 +86,23 @@ project archive** and not SysEx-settable):
 - thru: `130` off (default) · `131` on
 - reset controllers at stop: `140` don't (default) · `141` do
 
+Measured on an EP-133, OS 2.5.1 (notes logged from its MIDI out, sound timed
+from its USB audio):
+
+- **`127`**: a pad with no per-pad channel sends nothing when hit and plays
+  from no incoming note. A pad with its own channel sends its root note on
+  that channel and plays from any note on that channel, pitched relative to
+  its root; pads sharing a channel play together.
+- **`110`**: pads with no per-pad channel send on channel 1 with the pad-map
+  notes above and play from incoming pad-map notes on any channel (channel 2
+  worked as well as 1). Pads with their own channel behave as under `127`.
+  Sequencer playback sends every event on channel 1 at its recorded pitch, so
+  the receiver cannot tell pads apart (drums recorded at 60 all arrive as 60).
+- **CC12 / CC13** change nothing under `127` (sent on channel 1 and on all 16).
+  Under `110` both move the FX, on channels 1, 2 and 16 alike (delay: CC13
+  0 → 127 made the tail about 6× longer). Turning the FX knobs on the device
+  sends no CC under either code.
+
 Do not conflate MIDI clock with the 8/16/24 **sync rate** menus (`200`–`212`) —
 those belong to the separate 3.5 mm TRS sync jack (sync24, needs a TRS→DIN
 sync cable), unrelated to USB/DIN MIDI clock.

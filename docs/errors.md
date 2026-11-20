@@ -42,6 +42,7 @@ There are two very different failure surfaces
 | `err scene 156` | 2.5.1 | Zeroing the `04 04` time-signature bytes of **unused** scene chunks | High | Unused scene chunks must stay `00 00 00 00 04 04` |
 | `err lfs 6327` | 2.0.5 | **Overlapping FILE sessions** (even two read-only clients) | High | The FILE subsystem is globally single-threaded — serialize everything behind one lock |
 | `err 82` / `err 8200` | 2.0.5 | Client-side FILE state corruption: status byte decoded as packed7 payload, speculative reads past EOF, aggressive retries after partial streams, overlapping reads | High | Exact-size reads; strip the status byte before packed7 decode; no read-past-EOF; no overlap |
+| `ERR 820` | EP-133 2.5.1 | Partial project GET: only some pages read, by page number, without reading to EOF; the device dropped off USB | Medium (one incident) | Read every page in order to EOF, back to back; power-cycle before any write |
 | no error, valid readback, **silent playback** | 2.5.1 | Project assigns a sound slot not present under `/sounds` | High | The project TAR and the sound store are separate deliverables — preflight every assigned slot |
 
 ## Notes per signature
